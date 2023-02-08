@@ -1,14 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { Role } from 'src/types/user.types';
-import { Book } from '../book/book.schema';
+import mongoose, { Document, Mongoose } from 'mongoose';
+import { Role } from 'src/app/types/role.enum';
+import { Link } from '../link/link.schema';
 
-export type UserDocument = User & Document;
 
-@Schema()
-export class User {
-  @Prop({ required: true })
-  _id: string;
+// export type UserDocument = User & Document;
+
+@Schema({timestamps: true})
+export class User  extends Document {
+
+  @Prop()
+  name: string
 
   @Prop()
   email: string;
@@ -16,8 +18,8 @@ export class User {
   @Prop({ select: false })
   password: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
-  book: Book[];
+  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'link'})
+  link: Link[]
 
   @Prop({ default: Role.USER })
   role: Role[];

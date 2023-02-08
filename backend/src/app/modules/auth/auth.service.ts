@@ -1,64 +1,38 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { UserService } from '../../modules/user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { UserEntity } from 'src/modules/user/entities/User.entity';
-import { RefreshTokenService } from 'src/modules/refresh-token/refresh-token.service';
 import * as dayjs from 'dayjs';
-import { RefreshTokenEntity } from "../refresh-token/refresh-token.entity";
+import { User } from '../user/user.schema';
+import * as bcrypt from "bcrypt"
 
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
-    private refreshService: RefreshTokenService,
+    
     private jwtService: JwtService,
   ) {}
 
-  async validate(email: string, password: string): Promise<UserEntity> {
-    const user = await this.userService.findOneByEmail(email);
-    if (!user) {
-      throw new HttpException("user not found", 404)
-    }
-    const validation = await this.userService.comparePassword(
-      password,
-      user.password,
-    );
+  async validadeUser(email: string, password: string) {
+    const user = await this.userService.findOne({ email });
+    if(!user) throw new NotFoundException("email is invalid")
+    const validation = await bcrypt.compare(password, user.password);
     if (!validation) {
-      throw new HttpException('Email ou senha invalidos', 401);
+      throw new HttpException('password invalid', 401);
     }
     return user;
   }
 
-  async generateToken(user: UserEntity) {
-    await this.refreshService.findByUserId(user._id);
-    const refreshToken = await this.refreshService.generateRefreshToken(user);
-  
-    const payload = { username: user.email, sub: user._id };
-    return {
-      id: user._id,
-      role: user.role,
-      access_token: this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '1d',
-      }),
-      refresh_token: refreshToken.refreshToken,
-    };
+  async login(email: string, password: string) {
+    if(!email || !password){
+      throw new BadRequestException("email and password required")
+    }
+    const user = await this.validadeUser(email, password);
+    let payload = { username: user.email, sub: user._id, role: user.role };
+    const token = await this.jwtService.sign(payload, { expiresIn: '1h' });
+    return { id: user._id, token: token };
   }
 
-  async generateNewToken(refreshToken: string) {
-    const ExistentRefreshToken: any = await this.refreshService.find(
-      refreshToken,
-    );
-    const { createdAt, expiresAt } = ExistentRefreshToken;
-    const invalidToken = dayjs().isAfter(expiresAt);
-    if (invalidToken) {
-      throw new HttpException('refresh token invalid', 400);
-    }
-    const newToken = this.jwtService.sign(
-      { username: ExistentRefreshToken.userId },
-      { secret: process.env.JWT_SECRET, expiresIn: '30d' },
-    );
-    return { acess_token: newToken };
-  }
+  
 }

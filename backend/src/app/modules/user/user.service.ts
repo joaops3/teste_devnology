@@ -1,14 +1,17 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, BadRequestException, NotFoundException, UseGuards } from '@nestjs/common';
 import { User } from './user.schema';
 import { CreateUserDto } from './userDto/create-user.dto';
 import { UpdateUserDto } from './userDto/update-user.dto';
 import * as bcrypt from 'bcrypt';
-import { Book } from '../book/book.schema';
-import { UserRepository } from './repositories/user.repository';
-
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import * as mongoose from "mongoose"
+import { CreateLinkDto } from '../link/dtos/create-link.dto';
+import { LinkService } from '../link/link.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>, private linkService: LinkService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     if (!createUserDto.email) {
@@ -17,94 +20,75 @@ export class UserService {
     if (!createUserDto.email) {
       throw new HttpException('password obrigatorio', 400);
     }
+    createUserDto.name = createUserDto.name.toLocaleLowerCase().trim()
+    const createdUser = new this.userModel(createUserDto);
+    let salt = await bcrypt.genSalt(12);
+    let hash = await bcrypt.hash(createdUser.password, salt);
 
-    const createdUser = await this.userRepository.create(createUserDto);
-
+    createdUser.password = hash;
+    await createdUser.save();
     return createdUser;
   }
 
-  async findAll() {
-    return await this.userRepository.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.userModel.find().populate('link').exec()
   }
 
-  async findOne(id: string) {
-    const user = await this.userRepository.findOneById(id);
+
+  async findOne(data: {_id?: string, email?: string}): Promise<User> {
+    const user = await this.userModel
+      .findOne(data).populate('link')
     if (!user) {
       throw new HttpException('user not found', 404);
     }
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<User> {
-    const user = this.userRepository.findOneByEmail(email);
-    if (!user) {
-      throw new HttpException('error user not found', 404);
-    }
-    return user;
-  }
-
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(_id: string, updateUserDto: UpdateUserDto): Promise<void> {
     if (!updateUserDto.email) {
-      throw new HttpException('name required', 400);
+      throw new HttpException('email required', 400);
     }
-    const user = await this.userRepository.findOneById(id);
-    if (!user) {
-      throw new HttpException('user not found', 404);
-    }
-    const updated = await this.userRepository.update(user, updateUserDto);
-    if (!updated) {
-      throw new HttpException('update erro', 422);
-    }
-    return updated;
+    const user = await (await this.findOne({_id}))
+    
+    await this.userModel.updateOne(
+      { _id: _id },
+      {
+        $set: updateUserDto,
+      },
+    ).catch((e)=> {throw new BadRequestException("Update error: ", e.message)})
+
   }
 
-  async delete(id: string) {
-    const user = await this.userRepository.delete(id);
-    if (!user) {
-      throw new HttpException('bad request', 400);
-    }
-    return { message: 'deleted' };
+  async delete(id: string): Promise<void> {
+     await this.userModel.findByIdAndDelete(id).catch(e => {throw new BadRequestException("delete error")})
   }
 
-  async comparePassword(password: string, userPassword: string) {
-    try {
-      const validation = await bcrypt.compare(password, userPassword);
-      return validation;
-    } catch (e) {
-      console.log(e);
-    }
+
+  async addLink(_id: string, createLinkDto: CreateLinkDto): Promise<void> {
+    const user = await this.findOne({_id})
+    if(!user) throw new NotFoundException("user not found")
+
+    const newLink = await this.linkService.create(createLinkDto)
+
+    user.link.push(newLink._id)
+    await user.save()
+
+    await this.userModel.findOneAndUpdate({_id}, {$set: user})
   }
 
-  async getBooks(_id: string) {
-    const user = await this.userRepository.findOneById(_id);
-    return { books: user.book };
+  async removeLink(_id: string, linkId: string): Promise<void> {
+    const user = await this.findOne({_id})
+    if(!user) throw new NotFoundException("user not found")
+
+    const link = await this.linkService.findOne(linkId)
+    if(!link) throw new NotFoundException("link not found")
+
+    user.link = user.link.filter((item) => item._id !== linkId)
+    await user.save()
+
+    await this.userModel.findOneAndUpdate({_id}, {$set: user})
+    await this.linkService.delete(linkId)
   }
 
-  async addBook(id: string, books: Book[]) {
-    const user = await this.userRepository.findOneById(id);
-    if (!user) {
-      throw new HttpException('user not found', 404);
-    }
-    if (!user.book) {
-      user.book = [];
-    }
-    user.book = [...user.book, ...books];
-    const updated = await this.userRepository.updateBook(user, user.book);
-    if (!updated) {
-      throw new HttpException('erro update', 422);
-    }
-    return { message: 'success' };
-  }
-
-  async removeBook(id: string, bookId: string) {
-    const user = await this.userRepository.findOneById(id);
-    if (!user.book) {
-      throw new HttpException('book not found', 404);
-    }
-    user.book = user.book.filter((book) => {
-      if (book._id != bookId) return book;
-    });
-    await this.userRepository.updateBook(user, user.book);
-    return { message: 'deleted' };
-  }
+ 
 }

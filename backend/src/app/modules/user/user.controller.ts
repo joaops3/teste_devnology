@@ -11,9 +11,11 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/app/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/app/common/guards/roles.guard';
+import { Role } from 'src/app/types';
 import { JwtAuthGuard } from '../../modules/auth/jwt-auth.guard';
-import { BookService } from '../book/book.service';
-import { BuyBookDto } from '../book/dto/buy-book.dto';
+import { CreateLinkDto } from '../link/dtos/create-link.dto';
 import { UserService } from './user.service';
 import { CreateUserDto } from './userDto/create-user.dto';
 import { UpdateUserDto } from './userDto/update-user.dto';
@@ -22,7 +24,6 @@ import { UpdateUserDto } from './userDto/update-user.dto';
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly bookService: BookService,
   ) {}
 
   @Get('/')
@@ -30,16 +31,17 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.USER)
   @Get('/:id')
-  findOne(@Param() param: { id: string }) {
-    return this.userService.findOne(param.id);
+  findOne(@Param("id") _id: string) {
+    return this.userService.findOne({_id});
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('/:id')
-  update(@Param() param: { id: string }, @Body() updateUserDto: UpdateUserDto) {
-    const user = this.userService.update(param.id, updateUserDto);
+  update(@Param("id") _id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = this.userService.update(_id, updateUserDto);
     return user;
   }
 
@@ -48,22 +50,17 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Put(':id/buy')
-  async buyBook(
-    @Param() param: { id: string },
-    @Body() buyBookDto: BuyBookDto[],
-  ) {
-    const books = await this.bookService.findToBuy(buyBookDto);
-    return this.userService.addBook(param.id, books);
+
+  @Post('/:id/addlink')
+  async addlinkToUser(@Param('id') _id: string, createLinkDto: CreateLinkDto){
+    return await this.userService.addLink(_id, createLinkDto)
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id/delete')
-  async removeBook(
-    @Param() param: { id: string },
-    @Body() bookId: { id: string },
-  ) {
-    return this.userService.removeBook(param.id, bookId.id);
+  @Post('/:id/removelink/:linkId')
+  async removelinkFromUser(@Param() {_id, linkId}: {_id: string, linkId: string}, createLinkDto: CreateLinkDto){
+    return await this.userService.removeLink(_id, linkId)
   }
+
+ 
+
 }
