@@ -13,6 +13,7 @@ export class LinkService {
     async create(createLinkDto: CreateLinkDto): Promise<Link>{
         const link = await new this.LinkModel(createLinkDto)
         if(!link) throw new BadRequestException()
+        await link.save()
         return link
     }
 
@@ -27,8 +28,8 @@ export class LinkService {
     }
 
     async delete(_id: string): Promise<void> {
-        await this.LinkModel.findOneAndDelete({_id}).catch(e => {
-            throw new BadRequestException()
+        await this.LinkModel.deleteOne({_id}).catch(e => {
+            throw new BadRequestException(e)
         })
     }
 }

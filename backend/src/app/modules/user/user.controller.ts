@@ -20,45 +20,56 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './userDto/create-user.dto';
 import { UpdateUserDto } from './userDto/update-user.dto';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
   constructor(
     private readonly userService: UserService,
   ) {}
-
-  @Get('/')
-  findAll() {
-    return this.userService.findAll();
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  
   @Roles(Role.USER)
-  @Get('/:id')
-  findOne(@Param("id") _id: string) {
-    return this.userService.findOne({_id});
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/')
+  async findAll() {
+    return await this.userService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/:id')
+  async findOne(@Param("id") _id: string) {
+    const user = await this.userService.findOne({_id});
+    return {data: {_id: user._id, email: user.email, name: user.name, link: user.link  }}
+  }
+
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('/:id')
   update(@Param("id") _id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = this.userService.update(_id, updateUserDto);
     return user;
   }
 
-  @Post('/')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  @Post('')
+  async create(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+    return {data: {_id: user._id}}
   }
 
 
-  @Post('/:id/addlink')
-  async addlinkToUser(@Param('id') _id: string, createLinkDto: CreateLinkDto){
+  @Delete("/:id")
+  async deleteUser(@Param('id') _id: string){
+     return await this.userService.delete(_id)
+  }
+
+  @Put('/:id/addlink')
+  async addlinkToUser(@Param('id') _id: string,  @Body()createLinkDto: CreateLinkDto){
     return await this.userService.addLink(_id, createLinkDto)
   }
 
-  @Post('/:id/removelink/:linkId')
-  async removelinkFromUser(@Param() {_id, linkId}: {_id: string, linkId: string}, createLinkDto: CreateLinkDto){
-    return await this.userService.removeLink(_id, linkId)
+  @Delete('/:id/removelink/:linkId')
+  async removelinkFromUser(@Param() {id, linkId}: {id: string, linkId: string}){
+  
+    return await this.userService.removeLink(id, linkId)
   }
 
  

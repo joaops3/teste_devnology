@@ -9,23 +9,21 @@ import * as mongoose from "mongoose"
 import { CreateLinkDto } from '../link/dtos/create-link.dto';
 import { LinkService } from '../link/link.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Link } from '../link/link.schema';
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>, private linkService: LinkService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    if (!createUserDto.email) {
-      throw new HttpException('nome obrigatorio', 400);
-    }
-    if (!createUserDto.email) {
-      throw new HttpException('password obrigatorio', 400);
-    }
+    const founded = await this.userModel.findOne({email: createUserDto.email})
+    if(founded) throw new BadRequestException("Email already registered")
     createUserDto.name = createUserDto.name.toLocaleLowerCase().trim()
     const createdUser = new this.userModel(createUserDto);
     let salt = await bcrypt.genSalt(12);
     let hash = await bcrypt.hash(createdUser.password, salt);
 
     createdUser.password = hash;
+    
     await createdUser.save();
     return createdUser;
   }
@@ -37,7 +35,7 @@ export class UserService {
 
   async findOne(data: {_id?: string, email?: string}): Promise<User> {
     const user = await this.userModel
-      .findOne(data).populate('link')
+      .findOne(data).populate('link').exec()
     if (!user) {
       throw new HttpException('user not found', 404);
     }
@@ -59,21 +57,19 @@ export class UserService {
 
   }
 
-  async delete(id: string): Promise<void> {
-     await this.userModel.findByIdAndDelete(id).catch(e => {throw new BadRequestException("delete error")})
+  async delete(_id: string): Promise<void> {
+     await this.userModel.deleteOne({_id}).catch(e => {throw new BadRequestException("delete error")})
   }
 
 
   async addLink(_id: string, createLinkDto: CreateLinkDto): Promise<void> {
-    const user = await this.findOne({_id})
+    const user = await this.userModel.findOne({_id}).populate("link").exec()
     if(!user) throw new NotFoundException("user not found")
-
     const newLink = await this.linkService.create(createLinkDto)
+  
+    user.link.push(newLink)
 
-    user.link.push(newLink._id)
-    await user.save()
-
-    await this.userModel.findOneAndUpdate({_id}, {$set: user})
+    await this.userModel.findOneAndUpdate({_id}, {$set: user}).catch(e => {throw new HttpException(e, 500)})
   }
 
   async removeLink(_id: string, linkId: string): Promise<void> {
@@ -82,10 +78,9 @@ export class UserService {
 
     const link = await this.linkService.findOne(linkId)
     if(!link) throw new NotFoundException("link not found")
-
-    user.link = user.link.filter((item) => item._id !== linkId)
-    await user.save()
-
+    
+    user.link = user.link.filter((item) => item._id != linkId)
+   
     await this.userModel.findOneAndUpdate({_id}, {$set: user})
     await this.linkService.delete(linkId)
   }

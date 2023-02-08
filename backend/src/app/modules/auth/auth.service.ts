@@ -15,6 +15,7 @@ export class AuthService {
   ) {}
 
   async validadeUser(email: string, password: string) {
+
     const user = await this.userService.findOne({ email });
     if(!user) throw new NotFoundException("email is invalid")
     const validation = await bcrypt.compare(password, user.password);
@@ -31,7 +32,7 @@ export class AuthService {
     const user = await this.validadeUser(email, password);
     let payload = { username: user.email, sub: user._id, role: user.role };
     const token = await this.jwtService.sign(payload, { expiresIn: '1h' });
-    return { id: user._id, token: token };
+    return { id: user._id, name: user.name, token: token };
   }
 
   

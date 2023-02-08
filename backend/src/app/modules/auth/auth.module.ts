@@ -4,10 +4,13 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { AuthController } from './auth.controller';
+import { ConfigModule } from '@nestjs/config';
 
 
 @Module({
-  imports: [
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+  }),
     UserModule,
     JwtModule.register({ secret: process.env.JWT_SECRET }),
   ],

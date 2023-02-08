@@ -7,9 +7,6 @@ export class CreateLinkDto {
     title: string
 
     @IsString()
-    label: string
-
-    @IsString()
     @IsNotEmpty()
     href: string
 }

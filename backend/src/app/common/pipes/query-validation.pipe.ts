@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException } from "@nestjs/common";
 import { ArgumentMetadata, PipeTransform } from "@nestjs/common/interfaces";
 
-export class PlayerQueryPipe implements PipeTransform {
+export class QueryValidationPipe implements PipeTransform {
 
 
 

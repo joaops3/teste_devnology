@@ -4,10 +4,10 @@ import { Role } from 'src/app/types/role.enum';
 import { Link } from '../link/link.schema';
 
 
-// export type UserDocument = User & Document;
+export type UserDocument = User & Document;
 
-@Schema({timestamps: true})
-export class User  extends Document {
+@Schema()
+export class User extends Document {
 
   @Prop()
   name: string
@@ -15,14 +15,14 @@ export class User  extends Document {
   @Prop()
   email: string;
 
-  @Prop({ select: false })
+  @Prop()
   password: string;
 
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'link'})
+  @Prop([{type: mongoose.Schema.Types.ObjectId, ref: Link.name}])
   link: Link[]
 
   @Prop({ default: Role.USER })
-  role: Role[];
+  role: Role;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

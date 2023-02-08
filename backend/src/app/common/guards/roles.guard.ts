@@ -20,6 +20,7 @@ export class RolesGuard implements CanActivate {
        try{
          let token = request.headers.authorization.split(" ")[1]
          let decodedUser: any = verify(token, process.env.JWT_SECRET)
+         
          if(decodedUser.role === requiredRoles) return true
        }catch(e){
         return false
