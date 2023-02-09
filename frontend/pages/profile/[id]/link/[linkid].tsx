@@ -13,34 +13,37 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  VStack,
   Heading,
+  Box,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Card from "../../../../components/UI/Card";
-import MainContainer from "../../../../components/UI/MainContainer";
-import { IdentificationCard, At, DeviceMobile, Gear } from "phosphor-react";
+import MainContainer from "../../../../components/containers/MainContainer";
+import { IdentificationCard, At, DeviceMobile } from "phosphor-react";
 import SelectedInput from "../../../../components/UI/SelectedInput";
 import CurrencyInput from "../../../../components/UI/CurrencyInput";
+import FormLink from "../../../../components/form/FormLink";
 
-const Billet_creation = () => {
+const Edit = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [step1, setStep1] = useState<boolean>(false);
-  const [step2, setStep2] = useState<boolean>(false);
+ 
   const [value, setValue] = useState<string>("");
   const [amouth, setAmouth] = useState<string>("");
   const [selectedInput, setSelectedInput] = useState<"EMAIL" | "CPF" | "MOBILE">("CPF");
 
   return (
     <>
-      <MainContainer>
+     <MainContainer>
         <Flex direction="column" mx="auto" alignItems={"center"} gap="5" mb="5">
-          <Heading color={"gray.600"}>To do</Heading>
+          <Heading color={"gray.600"}>Salvar novo Link</Heading>
 
-          <Gear size={300} />
+         <FormLink type="edit" data={{}}></FormLink>
         </Flex>
       </MainContainer>
     </>
   );
 };
 
-export default Billet_creation;
+export default Edit;

@@ -10,7 +10,7 @@ const MainContainer: React.FC<Props> = ({ children }) => {
   return (
     <>
       <Header></Header>
-      <Flex as="section" w="100%" maxWidth="1420px" mx="auto" px={["4, 8"]}>
+      <Flex as="section" w="100%" maxWidth="1420px" mx="auto" px={[2]} >
         {children}
       </Flex>
     </>

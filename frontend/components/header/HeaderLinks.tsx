@@ -12,74 +12,76 @@ import {
   MenuButton,
   MenuList,
   useBreakpointValue,
+  Link,
 } from "@chakra-ui/react";
-import { BiChevronDown, BiPhone } from "react-icons/bi";
+import { BiChevronDown, BiPencil } from "react-icons/bi";
+import {AiOutlineStar, AiOutlineUnorderedList} from "react-icons/ai"
 import MenuItem from "./MenuItem";
 
-interface Props {}
+interface Props {
+  id: string
+}
 
-const HeaderLinks = forwardRef<HTMLDivElement>(({}, ref) => {
+const HeaderLinks = forwardRef<HTMLDivElement, Props>(({id}, ref) => {
   return (
     <>
+
+      <Link href={`/profile/${id}/`}>
+        <Text
+          variant={"link"}
+          fontWeight={'bold'}
+          color={"gray.800"}
+          mx="2"
+          borderRadius={"none"}
+          _hover={{ textDecoration: "none" }}
+          p="3"
+          display={'flex'}
+          gap='2'
+          alignItems={"center"}
+        >
+          <AiOutlineUnorderedList></AiOutlineUnorderedList>
+          Meus Salvos
+        </Text>
+        </Link>
+
+         <Link href={`/profile/${id}/link/`}>
+        <Text
+          variant={"link"}
+          fontWeight={'bold'}
+          color={"gray.800"}
+          mx="2"
+          borderRadius={"none"}
+          _hover={{ textDecoration: "none" }}
+          p="3"
+          display={'flex'}
+          gap='2'
+          alignItems={"center"}
+        >
+          <BiPencil></BiPencil>
+          Cadastrar
+        </Text>
+        </Link>
+      
+
+     
       <Menu>
         <MenuButton
           as={Button}
+          leftIcon={<AiOutlineStar></AiOutlineStar>}
           rightIcon={<BiChevronDown />}
           variant={"link"}
           color={"gray.800"}
-          mx="10"
+          mx={[0, 10]}
           borderRadius={"none"}
           _hover={{ textDecoration: "none" }}
           p="3"
         >
-          Operações
+          Favoritos
         </MenuButton>
         <MenuList bg="gray.100" borderColor={"gray.100"}>
-          <MenuItem href={`/profile/1/transfer`}>Tranferência</MenuItem>
-          <MenuItem href={`/profile/1/pix/pix_transfer`}>Pagamento Pix</MenuItem>
-          <MenuItem href={`/profile/1/billet/billet_payment`}>Pagar Boleto</MenuItem>
-        </MenuList>
-      </Menu>
+          <MenuItem href={`/profile/${id}/support/whatsapp`}>Devblog</MenuItem>
 
-      <Menu>
-        <MenuButton
-          as={Button}
-          rightIcon={<BiChevronDown />}
-          variant={"link"}
-          color={"gray.800"}
-          mx="10"
-          borderRadius={"none"}
-          _hover={{ textDecoration: "none" }}
-          p="3"
-        >
-          Saldo
-        </MenuButton>
-        <MenuList bg="gray.100" borderColor={"gray.100"}>
-          <MenuItem href={`/profile/1/balance/statement`}>Extrato</MenuItem>
-
-          <MenuItem href={`/profile/1/pix/pix_register`}>Cadastrar Chave Pix</MenuItem>
-
-          <MenuItem href={`/profile/1/billet/billet_creation`}>Gerar Boleto</MenuItem>
-        </MenuList>
-      </Menu>
-      <Menu>
-        <MenuButton
-          as={Button}
-          leftIcon={<BiPhone></BiPhone>}
-          rightIcon={<BiChevronDown />}
-          variant={"link"}
-          color={"gray.800"}
-          mx="10"
-          borderRadius={"none"}
-          _hover={{ textDecoration: "none" }}
-          p="3"
-        >
-          Suporte
-        </MenuButton>
-        <MenuList bg="gray.100" borderColor={"gray.100"}>
-          <MenuItem href={`/profile/1/support/whatsapp`}>Whatsapp</MenuItem>
-
-          <MenuItem href={`/profile/1/support/phone`}>Telefone</MenuItem>
+          <MenuItem href={`/profile/${id}/support/phone`}>outro</MenuItem>
         </MenuList>
       </Menu>
     </>

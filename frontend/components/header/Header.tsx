@@ -25,6 +25,8 @@ import MenuItem from "./MenuItem";
 import HeaderLinks from "./HeaderLinks";
 import DrawerBar from "./Drawer";
 import Link from "next/link";
+import useAuthContext from "../../context/AuthContext";
+import Logo from "../UI/Logo";
 
 const Header: React.FC = () => {
   const isMobile = useBreakpointValue({
@@ -34,6 +36,8 @@ const Header: React.FC = () => {
 
   const [showBalance, setShowBalance] = useState<boolean>(true);
   const { isOpen, onClose, onOpen, onToggle, isControlled, getButtonProps, getDisclosureProps } = useDisclosure();
+
+  const {user, logout} = useAuthContext()
   return (
     <>
       <Flex
@@ -42,43 +46,37 @@ const Header: React.FC = () => {
         bgColor={"gray.100"}
         justifyContent="center"
         align={"center"}
-        boxShadow="0 2rem 2rem 0 #C6F6D5CC"
-        px={{ base: "3", md: 0 }}
+        boxShadow="0 2rem 2rem 0 #FEFCBFCC"
+        px={{ base: "3", md: 3 }}
         mb="14"
+      
         // position={"fixed"}
       >
         <Flex w={{ base: "100%", md: "100%" }} maxWidth={1420} justify="space-between" align={"center"} py="4">
           <HStack>
-            <Link href={`/profile/1`}>
-              <Image src="/logo.svg" width={["40px", "100px"]} mr="2" _hover={{ cursor: "pointer" }}></Image>
+            <Link href={`/profile/${user.id}`}>
+             <Logo></Logo>
             </Link>
-            {isMobile ? <BiMenu onClick={() => onOpen()} size="30"></BiMenu> : <HeaderLinks />}
+            {isMobile ? <BiMenu onClick={() => onOpen()} size="30"></BiMenu> : <HeaderLinks id={user.id} />}
           </HStack>
           <HStack spacing={5}>
             <VStack spacing={1}>
-              <Text fontSize={{ base: "10", md: "15" }}>Nome Sobrenome</Text>
+              <Text fontSize={{ base: "10", md: "15" }}>{user.name ?? " "}</Text>
 
-              <HStack display={"flex"} alignItems="center" justifyContent={"center"}>
-                <Text fontSize={{ base: "10", md: "15" }} minWidth={"77px"}>
-                  {showBalance ? "R$ 1000.00" : ""}
-                </Text>
-                { showBalance ? <BsEye size={25} style={{ cursor: "pointer" }} onClick={() => setShowBalance(!showBalance)}></BsEye> : <BsEyeSlash size={25} style={{ cursor: "pointer" }} onClick={() => setShowBalance(!showBalance)}></BsEyeSlash> }
-              </HStack>
+            
             </VStack>
             <Menu>
               <MenuButton
                 as={IconButton}
                 aria-label="Options"
-                icon={<Avatar name="Nome Sobrenome"></Avatar>}
+                icon={<Avatar bg="yellow.400" name={user.name ?? ""}></Avatar>}
                 variant="none"
+              
               />
               <MenuList bg="gray.100" borderColor={"gray.100"}>
-                <Box p="3">
-                  <Text>Conta: xxxxx-xx</Text>
-                </Box>
-                <MenuItem href={`/profile/1/user/data`}>Dados Cadastrais</MenuItem>
+                <MenuItem href={`/profile/${user.id}/user/data`}>Dados Cadastrais</MenuItem>
 
-                <MenuItem href="/">Logout</MenuItem>
+                <ChakraMenuItem  _hover={{ bg: "yellow.200" }} as={'button'} onClick={() => {logout()}}>Logout</ChakraMenuItem>
               </MenuList>
             </Menu>
           </HStack>

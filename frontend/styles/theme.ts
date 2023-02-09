@@ -1,4 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
+import { colors } from "./colors";
 
 //serve para substituir os temas do chakra
 
@@ -7,6 +8,7 @@ export const theme = extendTheme({
     heading: "Roboto",
     body: "Roboto",
   },
+  colors: colors,
   styles: {
     global: {
       html: {

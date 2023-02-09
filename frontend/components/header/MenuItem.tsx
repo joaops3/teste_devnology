@@ -10,7 +10,7 @@ interface Props extends LinkProps {
 const MenuItem = forwardRef<HTMLAnchorElement, Props>(({ children, href, ...rest }, ref) => {
   return (
     <Link href={href} {...rest} passHref>
-      <ChakraMenuItem _hover={{ bg: "green.200" }} >{children}</ChakraMenuItem>
+      <ChakraMenuItem _hover={{ bg: "yellow.200" }} >{children}</ChakraMenuItem>
     </Link>
   );
 });

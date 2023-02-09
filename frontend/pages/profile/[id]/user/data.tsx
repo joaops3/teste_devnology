@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Link, Heading, Text, Highlight, VStack, SimpleGrid } from "@chakra-ui/react";
 import React from "react";
-import MainContainer from "../../../../components/UI/MainContainer";
+import MainContainer from "../../../../components/containers/MainContainer";
 import { PencilSimple } from "phosphor-react";
 const Data = () => {
   return (

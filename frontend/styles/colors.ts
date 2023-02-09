@@ -1,11 +1,27 @@
+import {theme} from "@chakra-ui/react"
 export const colors = {
-  bg: "gray.50",
-  font: "gray.500",
-  buttons: "whatsapp",
-  border: "gray.500",
-  bgItems: "gray.100",
-  boxShadowHeader: "0 2rem 2rem 0 rgb(41 48 66 / 10%)",
-  boxShadowHeaderGreen: "0 2rem 2rem 0 #C6F6D5CC",
-  buttonBorder: "green.300",
-  boxShadow: "0 0 4px RGBA(0, 0, 0, 0.16)",
+  primary: {
+    normal: theme.colors.yellow[500],
+    dark: theme.colors.yellow[600],
+  },
+  secondary: {
+    normal: "#087F32",
+    dark: "#087F32",
+  },
+
+  background: "#ffffff",
+  shape: "#ECECEC",
+  shape_secondary: "rgba(225, 225, 225, 1.0)",
+
+  title: "#002444",
+  subtitle: "",
+  subtitle_dark: "",
+  text: "#292A2d",
+  text_light: "#70798b",
+  text_dark: "#151618",
+
+  utils: {
+    success: "#479c73",
+    failed: "#e83534",
+  },
 };

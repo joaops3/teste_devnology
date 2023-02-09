@@ -19,7 +19,7 @@ const parameters = {
 api.interceptors.request.use(
   (config: AxiosRequestConfig) => {
     const user = getToken<any>("user");
-    if (user) {
+    if (user && config.headers) {
       config.headers.Authorization = `Bearer ${user.token}`;
     }
     return config;

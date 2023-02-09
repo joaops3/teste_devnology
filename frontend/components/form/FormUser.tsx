@@ -30,22 +30,29 @@ import {
   GridItem,
   HStack,
   Select,
-  Heading
+  Heading,
+  useToast
 } from "@chakra-ui/react";
-import { IAdress, IUser } from "../../interfaces/interfaces";
+import { IUserForm } from "../../@types/interfaces";
 import UF from "../../utils/UF.json";
 import InputMask from "react-input-mask"
+import { UserService } from "../../services/UserService";
+import { useRouter } from "next/dist/client/router";
 
 interface Props {
   type?: "edit | register";
 }
 
-interface IUserData {
-  users: IUser;
-  address: IAdress;
+interface IUserFormData {
+  data: IUserForm;
 }
 
 const FormUser = ({ type = "register" }) => {
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState<boolean>(false);
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(false)
+  const route = useRouter()
+  const toast = useToast()
   const {
     handleSubmit,
     control,
@@ -53,13 +60,43 @@ const FormUser = ({ type = "register" }) => {
     getValues,
     setValue,
     formState: { errors },
-  } = useForm<IUserData>({
-    defaultValues: {} as IUserData,
+  } = useForm<IUserFormData>({
+    defaultValues: {} as IUserFormData,
   });
 
-  const onSubmit: SubmitHandler<IUserData> = (data) => {};
+  const onSubmit: SubmitHandler<IUserFormData> = (data) => {
+    if(data.data.password !== passwordConfirmation){
+        setPasswordConfirmationError(true)
+        return
+    }
+    setLoading(true)
 
-  const [passwordConfirmationError, setPasswordConfirmationError] = useState<boolean>(false);
+    UserService().signin({...data.data}).then((resp) => {
+      toast({
+        title: 'Sucesso',
+        description: "Conta criada com sucesso",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      })
+      
+      setLoading(false)
+      route.push("/")
+      
+    }).catch((e)=> {
+      toast({
+        title: 'Erro',
+        description: e.response.data.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      })
+      console.log()
+      setLoading(false)
+    })
+  };
+
+ 
   return (
     <>
       <Flex
@@ -70,6 +107,7 @@ const FormUser = ({ type = "register" }) => {
         borderRadius="8"
         onSubmit={handleSubmit(onSubmit)}
         mb="3"
+        px="2"
       >
         <Heading my="2">{type === "register" ? "CADASTRAR" : "EDITAR"}</Heading>
         <SimpleGrid
@@ -84,207 +122,67 @@ const FormUser = ({ type = "register" }) => {
           px="8"
           borderRadius="8"
         >
-          <FormControl isInvalid={errors.users?.first_name ? true : false}>
+          <FormControl isInvalid={errors.data?.name ? true : false}>
             <FormLabel>Primeiro Nome</FormLabel>
             <Controller
-              name="users.first_name"
+              name="data.name"
               control={control}
-              defaultValue={getValues("users.first_name")}
-              rules={{ required: "O primeiro nome é obrigatório", maxLength: 20 }}
+              defaultValue={getValues("data.name")}
+              rules={{ required: "O primeiro nome é obrigatório", maxLength: 50 }}
               render={({ field }) => (
                 <ChakraInput
-                  id="users.first_name"
+                  id="data.name"
                   size={"md"}
-                  type="email"
+                  type="text"
                   bg="white"
-                  focusBorderColor="green.300"
+                  focusBorderColor="primary.normal"
                   {...field}
                 />
               )}
             />
-            <FormErrorMessage>{errors.users?.first_name?.message}</FormErrorMessage>
+            <FormErrorMessage>{errors.data?.name?.message}</FormErrorMessage>
           </FormControl>
-          <FormControl isInvalid={errors.users?.last_name ? true : false}>
-            <FormLabel>Sobrenome</FormLabel>
-            <Controller
-              name="users.last_name"
-              control={control}
-              defaultValue={getValues("users.last_name")}
-              rules={{ required: "O sobrenome é obrigatório", maxLength: 20 }}
-              render={({ field }) => (
-                <ChakraInput
-                  id="users.last_name"
-                  size={"md"}
-                  type="email"
-                  bg="white"
-                  focusBorderColor="green.300"
-                  {...field}
-                />
-              )}
-            />
-            <FormErrorMessage>{errors.users?.last_name?.message}</FormErrorMessage>
-          </FormControl>
-
-          <FormControl isInvalid={errors.users?.date_of_birth ? true : false}>
-            <FormLabel>Nascimento</FormLabel>
-            <Controller
-              name="users.date_of_birth"
-              control={control}
-              defaultValue={getValues("users.date_of_birth")}
-              rules={{ required: "A data de nascimento é obrigatório", maxLength: 20 }}
-              render={({ field }) => (
-                <ChakraInput
-                  id="users.date_of_birth"
-                  size={"md"}
-                  type="date"
-                  bg="white"
-                  focusBorderColor="green.300"
-                  {...field}
-                />
-              )}
-            />
-            <FormErrorMessage>{errors.users?.date_of_birth?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.users?.mothers_name ? true : false}>
-            <FormLabel>Nome da mãe</FormLabel>
-            <Controller
-              name="users.mothers_name"
-              control={control}
-              defaultValue={getValues("users.mothers_name")}
-              rules={{ required: "O nome da mãe é obrigatório", maxLength: 20 }}
-              render={({ field }) => (
-                <ChakraInput id="users.mothers_name" size={"md"} bg="white" focusBorderColor="green.300" {...field} />
-              )}
-            />
-            <FormErrorMessage>{errors.users?.mothers_name?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.users?.genre ? true : false}>
-            <FormLabel>Genero</FormLabel>
-            <Controller
-              name="users.genre"
-              control={control}
-              defaultValue={getValues("users.genre")}
-              rules={{ required: "O nome da genero é obrigatório", maxLength: 20 }}
-              render={({ field }) => (
-                <RadioGroup defaultValue="MALE">
-                  <Stack spacing={5} direction="row">
-                    <Radio colorScheme="whatsapp" bg="white" value="MALE">
-                      Masculino
-                    </Radio>
-                    <Radio colorScheme="whatsapp" bg="white" value="FEMALE">
-                      Feminino
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-              )}
-            />
-            <FormErrorMessage>{errors.users?.genre?.message}</FormErrorMessage>
-          </FormControl>
-
-          <Stack> </Stack>
-        {  type ==="edit" ? <div></div> :  <FormControl isInvalid={errors.users?.document ? true : false}>
-              <FormLabel>CPF</FormLabel>
-              <Controller
-                name="users.document"
-                control={control}
-                defaultValue={getValues("users.document")}
-                rules={{ required: "O CPF é obrigatório", maxLength: 15 }}
-                render={({ field }) => (
-                  <ChakraInput as={InputMask}
-                    id="users.document"
-                    mask="999.999.999-99"
-                    maskChar={null}
-                    size={"md"}
-                    bg="white"
-                    focusBorderColor="green.300"
-                    {...field}
-                  />
-                )}
-              />
-              <FormErrorMessage>{errors.users?.document?.message}</FormErrorMessage>
-            </FormControl>}
-          <Stack></Stack>
-          <FormControl isInvalid={errors.users?.mobile ? true : false}>
-            <FormLabel>Celular</FormLabel>
-            <Controller
-              name="users.mobile"
-              control={control}
-              defaultValue={getValues("users.mobile")}
-              rules={{ required: "O Celular é obrigatório", maxLength: 15 }}
-              render={({ field }) => (
-                <ChakraInput
-                  id="users.mobile"
-                  type="number"
-                  size={"md"}
-                  bg="white"
-                  focusBorderColor="green.300"
-                  {...field}
-                />
-              )}
-            />
-            <FormErrorMessage>{errors.users?.mobile?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.users?.phone ? true : false}>
-            <FormLabel>Telefone</FormLabel>
-            <Controller
-              name="users.phone"
-              control={control}
-              defaultValue={getValues("users.phone")}
-              //rules={{ required: "O Telefone é obrigatório", maxLength: 15 }}
-              render={({ field }) => (
-                <ChakraInput
-                  id="users.phone"
-                  type="number"
-                  size={"md"}
-                  bg="white"
-                  focusBorderColor="green.300"
-                  {...field}
-                />
-              )}
-            />
-            <FormErrorMessage>{errors.users?.phone?.message}</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.users?.email ? true : false}>
+         
+          <FormControl isInvalid={errors.data?.email ? true : false}>
             <FormLabel>Email</FormLabel>
             <Controller
-              name="users.email"
+              name="data.email"
               control={control}
-              defaultValue={getValues("users.email")}
-              rules={{ required: "O Email é obrigatório", maxLength: 40 }}
+              defaultValue={getValues("data.email")}
+              rules={{ required: "O Email é obrigatório", maxLength: 50 }}
               render={({ field }) => (
                 <ChakraInput
-                  id="users.email"
+                  id="data.email"
                   size={"md"}
                   bg="white"
                   type="email"
-                  focusBorderColor="green.300"
+                  focusBorderColor="primary.normal"
                   {...field}
                 />
               )}
             />
-            <FormErrorMessage>{errors.users?.email?.message}</FormErrorMessage>
+            <FormErrorMessage>{errors.data?.email?.message}</FormErrorMessage>
           </FormControl>
-          <Stack></Stack>
           {type === "edit" ? (
             <></>
           ) : (
             <>
-              <FormControl isInvalid={errors.users?.password ? true : false}>
+              <FormControl isInvalid={errors.data?.password ? true : false}>
                 <FormLabel>Senha</FormLabel>
                 <Controller
-                  name="users.password"
+                  name="data.password"
                   control={control}
-                  defaultValue={getValues("users.password")}
+                  defaultValue={getValues("data.password")}
                   rules={{ required: "A senha é obrigatório", maxLength: 40 }}
                   render={({ field }) => (
                     <Popover>
                       <PopoverTrigger>
                         <ChakraInput
-                          id="users.password"
+                          id="data.password"
                           size={"md"}
                           bg="white"
                           type="password"
-                          focusBorderColor="green.300"
+                          focusBorderColor="primary.normal"
                           {...field}
                         />
                       </PopoverTrigger>
@@ -305,146 +203,21 @@ const FormUser = ({ type = "register" }) => {
                     </Popover>
                   )}
                 />
-                <FormErrorMessage>{errors.users?.password?.message}</FormErrorMessage>
+                <FormErrorMessage>{errors.data?.password?.message}</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={passwordConfirmationError}>
-                <FormLabel>Comfirmação de senha</FormLabel>
+                <FormLabel>Confirmação de senha</FormLabel>
 
-                <ChakraInput size={"md"} bg="white" type="email" focusBorderColor="green.300" />
+                <ChakraInput size={"md"} bg="white" type="password" value={passwordConfirmation} onChange={e => setPasswordConfirmation(e.target.value)} focusBorderColor="primary.normal" />
 
-                <FormErrorMessage>As senhas não conferem</FormErrorMessage>
+              {passwordConfirmationError && ( <FormErrorMessage>As senhas não conferem</FormErrorMessage>)}
               </FormControl>
             </>
           )}
         </SimpleGrid>
 
-        <Box bg={"gray.100"} p={5} mt="8" px="8" borderRadius="8" boxShadow={"0 0 4px RGBA(0, 0, 0, 0.16)"}>
-          <SimpleGrid minChildWidth={"300px"} spacing={2}>
-            <FormControl isInvalid={errors.address?.street ? true : false}>
-              <FormLabel>Rua</FormLabel>
-              <Controller
-                name="address.street"
-                control={control}
-                defaultValue={getValues("address.street")}
-                rules={{ required: "A rua é obrigatório", maxLength: 50 }}
-                render={({ field }) => (
-                  <ChakraInput
-                    id="address.street"
-                    size={"md"}
-                    bg="white"
-                    placeholder="Rua"
-                    focusBorderColor="green.300"
-                    {...field}
-                  />
-                )}
-              />
-              <FormErrorMessage>{errors.address?.street?.message}</FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.address?.neighborhood ? true : false}>
-              <FormLabel>bairro</FormLabel>
-              <Controller
-                name="address.neighborhood"
-                control={control}
-                defaultValue={getValues("address.neighborhood")}
-                rules={{ required: "O bairro é obrigatório", maxLength: 40 }}
-                render={({ field }) => (
-                  <ChakraInput
-                    id="address.neighborhood"
-                    size={"md"}
-                    bg="white"
-                    placeholder="Bairro"
-                    focusBorderColor="green.300"
-                    {...field}
-                  />
-                )}
-              />
-              <FormErrorMessage>{errors.address?.neighborhood?.message}</FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.address?.number ? true : false}>
-              <FormLabel>Numero</FormLabel>
-              <Controller
-                name="address.number"
-                control={control}
-                defaultValue={getValues("address.number")}
-                rules={{ required: "O numero é obrigatório", maxLength: 15 }}
-                render={({ field }) => (
-                  <ChakraInput
-                    id="address.number"
-                    size={"md"}
-                    bg="white"
-                    placeholder="00"
-                    focusBorderColor="green.300"
-                    {...field}
-                  />
-                )}
-              />
-              <FormErrorMessage>{errors.address?.number?.message}</FormErrorMessage>
-            </FormControl>
-          </SimpleGrid>
-          <SimpleGrid minChildWidth={"300px"} spacing={2} mt="2">
-            <FormControl isInvalid={errors.address?.city ? true : false}>
-              <FormLabel>Cidade</FormLabel>
-              <Controller
-                name="address.city"
-                control={control}
-                defaultValue={getValues("address.city")}
-                rules={{ required: "A cidade é obrigatório", maxLength: 30 }}
-                render={({ field }) => (
-                  <ChakraInput
-                    id="address.city"
-                    size={"md"}
-                    bg="white"
-                    placeholder="Cidade"
-                    focusBorderColor="green.300"
-                    {...field}
-                  />
-                )}
-              />
-              <FormErrorMessage>{errors.address?.state?.message}</FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.address?.state ? true : false}>
-              <FormLabel>Estado</FormLabel>
-              <Controller
-                name="address.state"
-                control={control}
-                defaultValue={getValues("address.state")}
-                rules={{ required: "O estado é obrigatório", maxLength: 30 }}
-                render={({ field }) => (
-                  <Select placeholder="Selecione" id="address.state" focusBorderColor="green.300" bg="white" {...field}>
-                    {UF.map((state, key) => {
-                      return <option key={key} value={state.uf}>{state.name}</option>;
-                    })}
-                  </Select>
-                )}
-              />
-              <FormErrorMessage>{errors.address?.zip_code?.message}</FormErrorMessage>
-            </FormControl>
-            <FormControl isInvalid={errors.address?.zip_code ? true : false}>
-              <FormLabel>CEP</FormLabel>
-              <Controller
-                name="address.zip_code"
-                control={control}
-                defaultValue={getValues("address.zip_code")}
-                rules={{ required: "O Cep é obrigatório", maxLength: 15 }}
-                render={({ field }) => (
-                  <ChakraInput
-                    id="address.zip_code"
-                    type={"number"}
-                    size={"md"}
-                    bg="white"
-                    placeholder="00000-000"
-                    focusBorderColor="green.300"
-                    {...field}
-                  />
-                )}
-              />
-              <FormErrorMessage>{errors.address?.zip_code?.message}</FormErrorMessage>
-            </FormControl>
-          </SimpleGrid>
-        </Box>
-
         <Flex justify={"flex-end"} mt="5">
-          <Button as={"button"} colorScheme={"whatsapp"} type="submit">
+          <Button isLoading={loading} as={"button"} colorScheme={"yellow"} type="submit">
             Cadastrar
           </Button>
         </Flex>

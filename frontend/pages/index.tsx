@@ -1,25 +1,36 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import {Flex, VStack, Input as ChakraInput, Link, InputGroup, FormLabel, Box, FormControl, InputLeftElement, FormHelperText, Button, FormErrorMessage, Image, Text} from "@chakra-ui/react"
 
 import {User, LockSimple} from "phosphor-react"
 import { useRouter } from "next/router"
+import AuthService from '../services/AuthService'
+import useAuthContext from '../context/AuthContext'
+import Logo from '../components/UI/Logo'
 
 
 const Home: NextPage = () => {
-  const router = useRouter()
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<boolean>(false)
+  const {signIn, isLogged, user} = useAuthContext()
+  const route = useRouter()
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if(!email || !password) {
       setError(true)
       return
     }
-    router.push("/profile/1");
+    
+    signIn(email, password)
   };
+
+  useEffect(()=> {
+    if(isLogged && user){
+      route.push(`/profile/${user.id}`)
+    }
+  },[])
 
   return (
     <>
@@ -39,7 +50,7 @@ const Home: NextPage = () => {
           boxShadow={"1px 6px 92px -2px rgba(0,0,0,0.4);"}
         >
           <VStack spacing={"5"}>
-            <Image src="/logo.svg" p="5" py="7"></Image>
+           |<Logo></Logo>
             <FormControl isInvalid={error} display="flex" justifyContent={"center"}>
               <FormErrorMessage my={3}>E-mail ou senha incorretos!</FormErrorMessage>
             </FormControl>
@@ -55,8 +66,8 @@ const Home: NextPage = () => {
                   placeholder="E-mail"
                   size={"md"}
                   bg={"white"}
-                  focusBorderColor="green.500"
-                  colorScheme={"whatsapp"}
+                  focusBorderColor="primary.normal"
+                  colorScheme={"yellow"}
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -76,29 +87,24 @@ const Home: NextPage = () => {
                   placeholder="Password"
                   size={"md"}
                   bg={"white"}
-                  focusBorderColor="green.500"
-                  colorScheme={"whatsapp"}
+                  focusBorderColor="primary.normal"
+                  colorScheme={"yellow"}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
                   }}
                 ></ChakraInput>
               </InputGroup>
-              <Link href="/forgot_password" _hover={{ color: "green.400" }}>
-                <FormHelperText color={"green.800"} _hover={{ color: "green.600" }} cursor="pointer">
-                  Esqueci minha senha
-                </FormHelperText>
-              </Link>
             </FormControl>
 
-            <Button as={"button"} type="submit" mt="3" width={"40%"} colorScheme={"whatsapp"} size="md">
+            <Button as={"button"} type="submit" mt="3" width={"40%"} colorScheme={"yellow"} size="md">
               Login
             </Button>
 
             <Box textAlign={"left"} w="100%">
               <Text>
                 Não Possui conta ?{" "}
-                <Link href="/sign" _hover={{ color: "green.400" }}>
+                <Link href="/sign" _hover={{ color: "primary.normal" }}>
                   Cadastrar
                 </Link>
               </Text>

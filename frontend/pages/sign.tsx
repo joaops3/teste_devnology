@@ -6,13 +6,14 @@ import {
   Box,
   Link
 } from "@chakra-ui/react";
+import Logo from '../components/UI/Logo';
 const SignIn = () => {
   return (
     <>
       <Flex w={"100%"} minHeight={"100vh"} align={"center"} justify={"center"} direction="column" mt="5" mb="5">
         <Box>
           <Link href="/">
-            <Image width={"300px"} src="/logo.svg"></Image>
+           <Logo></Logo>
           </Link>
         </Box>
         <FormUser></FormUser>

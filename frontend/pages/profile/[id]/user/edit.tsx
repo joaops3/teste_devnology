@@ -1,6 +1,6 @@
 import React from "react";
 import FormUser from "../../../../components/form/FormUser";
-import MainContainer from "../../../../components/UI/MainContainer";
+import MainContainer from "../../../../components/containers/MainContainer";
 
 const Edit = () => {
   return (
