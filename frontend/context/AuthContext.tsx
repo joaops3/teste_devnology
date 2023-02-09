@@ -16,6 +16,8 @@ interface IContext {
   isBooting: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  handleRefreshPage: () => void
+  refreshProfile: number
 }
 
 export const AuthContext = createContext<IContext>({} as IContext);
@@ -23,6 +25,7 @@ export const AuthContext = createContext<IContext>({} as IContext);
 export const AuthProvider = ({ children }: Props) => {
   const [isLogged, setIsLogged] = useState<boolean>(true);
   const [isBooting, setIsBooting] = useState<boolean>(true);
+  const [refreshProfile, setRefreshProfile ] =  useState<number>(0)
   const [user, setUser] = useState<IUserToken>({} as IUserToken);
   const toast = useToast()
   const signIn = async (email: string, password: string) => {
@@ -61,6 +64,8 @@ export const AuthProvider = ({ children }: Props) => {
     Router.replace("/");
   };
 
+  const handleRefreshPage = () => {setRefreshProfile(prev => prev+1); console.log("no auth",refreshProfile)}
+
   useEffect(() => {
     const user = getToken<IUserToken>("user");
     if (user) {
@@ -74,7 +79,7 @@ export const AuthProvider = ({ children }: Props) => {
     }
   }, [isLogged]);
 
-  return <AuthContext.Provider value={{ isLogged, isBooting, signIn, user, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ isLogged, isBooting, signIn, user, logout, handleRefreshPage, refreshProfile }}>{children}</AuthContext.Provider>;
 };
 
 const useAuthContext = () => {

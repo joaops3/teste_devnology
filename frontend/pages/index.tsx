@@ -27,9 +27,9 @@ const Home: NextPage = () => {
   };
 
   useEffect(()=> {
-    if(isLogged && user){
-      route.push(`/profile/${user.id}`)
-    }
+    // if(isLogged && user){
+    //   route.push(`/profile/${user.id}`)
+    // }
   },[])
 
   return (

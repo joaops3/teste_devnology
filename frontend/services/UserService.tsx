@@ -19,8 +19,8 @@ export const UserService = () => {
     return response
   }
 
-  const getUser = async () => {
-    const response = await api.get(`/user/`)
+  const getUser = async (id:string) => {
+    const response = await api.get(`/user/${id}`)
     return response
   }
 
@@ -30,7 +30,7 @@ export const UserService = () => {
   }
 
   const removeLinkUser = async (id: string, idLink: string) =>  {
-    const response = await api.put(`/user/${id}/removelink/${idLink}`)
+    const response = await api.delete(`/user/${id}/removelink/${idLink}`)
     return response
   }
   return {signin, getUser, updateUser, deleteUser, addLinkToUser, removeLinkUser}

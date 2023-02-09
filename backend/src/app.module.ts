@@ -7,12 +7,13 @@ import { join } from 'path';
 import { DbModule } from "./app/db.module";
 import { AuthModule } from './app/modules/auth/auth.module';
 import { UserModule } from './app/modules/user/user.module';
+import { LinkModule } from './app/modules/link/link.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    UserModule, AuthModule, DbModule
+    UserModule,LinkModule, AuthModule, DbModule
   ],
   controllers: [],
   providers: [],
