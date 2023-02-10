@@ -8,6 +8,8 @@ import { useRouter } from "next/router"
 import AuthService from '../services/AuthService'
 import useAuthContext from '../context/AuthContext'
 import Logo from '../components/UI/Logo'
+import { getToken } from '../utils/localStorage'
+import { IUserToken } from '../@types/interfaces'
 
 
 const Home: NextPage = () => {
@@ -27,9 +29,10 @@ const Home: NextPage = () => {
   };
 
   useEffect(()=> {
-    // if(isLogged && user){
-    //   route.push(`/profile/${user.id}`)
-    // }
+    const user = getToken<IUserToken>('user')
+    if(user){
+      route.push(`/profile/${user.id}`)
+    }
   },[])
 
   return (

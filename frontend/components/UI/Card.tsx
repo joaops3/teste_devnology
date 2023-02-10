@@ -18,25 +18,32 @@ interface Props {
   title: string;
   id: string;
   idLink: string;
-  url: string
+  url: string;
+  type?: "personal" | "outside";
 }
-const Card: React.FC<Props> = ({ title, id, idLink, url }) => {
-  const {handleRefreshPage} = useAuthContext()
-  const [disabled, setDisabled] = useState<boolean>(false)
+const Card: React.FC<Props> = ({
+  title,
+  id,
+  idLink,
+  url,
+  type = "personal",
+}) => {
+  const { handleRefreshPage } = useAuthContext();
+  const [disabled, setDisabled] = useState<boolean>(false);
   const toast = useToast();
   const handleDelete = () => {
-    setDisabled(true)
+    setDisabled(true);
     UserService()
       .removeLinkUser(id, idLink)
       .then((resp) => {
-        handleRefreshPage()
+        handleRefreshPage();
         toast({
           title: "Sucesso",
           description: "Item deletado com sucesso",
           status: "success",
           duration: 5000,
           isClosable: true,
-        })
+        });
       })
       .catch((e) => {
         toast({
@@ -46,14 +53,14 @@ const Card: React.FC<Props> = ({ title, id, idLink, url }) => {
           duration: 5000,
           isClosable: true,
         });
-        setDisabled(false)
+        setDisabled(false);
       });
   };
   return (
     <>
       <Flex
-      as={Button}
-      disabled={disabled}
+        as={Button}
+        disabled={disabled}
         alignItems={"center"}
         maxWidth={768}
         minHeight="70px"
@@ -64,29 +71,40 @@ const Card: React.FC<Props> = ({ title, id, idLink, url }) => {
         boxShadow={"0 0 4px RGBA(0, 0, 0, 0.16)"}
         mx="auto"
       >
-        <ChakraLink flex={1} href={url}  fontWeight={"semibold"}
-            textAlign={"start"}
-            fontSize="20px"
-            mt="2" _hover={{ textDecoration: "none" }}>
-            {title}
+        <ChakraLink
+          as="h2"
+          flex={1}
+          href={url}
+          fontWeight={"semibold"}
+          textAlign={"start"}
+          textTransform="capitalize"
+          fontSize="20px"
+          mt="2"
+          _hover={{ textDecoration: "none" }}
+        >
+          {title}
         </ChakraLink>{" "}
-        <Flex alignItems={"center"} gap="5">
-          <Link href={`/profile/${id}/link/${idLink}`}>
+        {type === "personal" && (
+          <Flex alignItems={"center"} gap="5">
+            <Link href={`/profile/${id}/link/${idLink}`}>
+              <Icon
+                as={BsPencilSquare}
+                fontSize={25}
+                _hover={{ color: "primary.normal" }}
+                cursor="pointer"
+              />
+            </Link>
             <Icon
-              as={BsPencilSquare}
-              fontSize={25}
+              as={AiOutlineDelete}
               _hover={{ color: "primary.normal" }}
               cursor="pointer"
+              fontSize={25}
+              onClick={() => {
+                handleDelete();
+              }}
             />
-          </Link>
-          <Icon
-            as={AiOutlineDelete}
-            _hover={{ color: "primary.normal" }}
-            cursor="pointer"
-            fontSize={25}
-            onClick={() => {handleDelete()}}
-          />
-        </Flex>
+          </Flex>
+        )}
       </Flex>
     </>
   );

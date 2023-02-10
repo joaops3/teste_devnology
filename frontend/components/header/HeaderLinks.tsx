@@ -15,55 +15,52 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { BiChevronDown, BiPencil } from "react-icons/bi";
-import {AiOutlineStar, AiOutlineUnorderedList} from "react-icons/ai"
+import { AiOutlineStar, AiOutlineUnorderedList } from "react-icons/ai";
 import MenuItem from "./MenuItem";
 
 interface Props {
-  id: string
+  id: string;
 }
 
-const HeaderLinks = forwardRef<HTMLDivElement, Props>(({id}, ref) => {
+const HeaderLinks = forwardRef<HTMLDivElement, Props>(({ id }, ref) => {
   return (
     <>
-
       <Link href={`/profile/${id}/`}>
         <Text
           variant={"link"}
-          fontWeight={'bold'}
+          fontWeight={"bold"}
           color={"gray.800"}
           mx="2"
           borderRadius={"none"}
           _hover={{ textDecoration: "none" }}
           p="3"
-          display={'flex'}
-          gap='2'
+          display={"flex"}
+          gap="2"
           alignItems={"center"}
         >
           <AiOutlineUnorderedList></AiOutlineUnorderedList>
           Meus Salvos
         </Text>
-        </Link>
+      </Link>
 
-         <Link href={`/profile/${id}/link/`}>
+      <Link href={`/profile/${id}/link/`}>
         <Text
           variant={"link"}
-          fontWeight={'bold'}
+          fontWeight={"bold"}
           color={"gray.800"}
           mx="2"
           borderRadius={"none"}
           _hover={{ textDecoration: "none" }}
           p="3"
-          display={'flex'}
-          gap='2'
+          display={"flex"}
+          gap="2"
           alignItems={"center"}
         >
           <BiPencil></BiPencil>
           Cadastrar
         </Text>
-        </Link>
-      
+      </Link>
 
-     
       <Menu>
         <MenuButton
           as={Button}
@@ -79,13 +76,11 @@ const HeaderLinks = forwardRef<HTMLDivElement, Props>(({id}, ref) => {
           Favoritos
         </MenuButton>
         <MenuList bg="gray.100" borderColor={"gray.100"}>
-          <MenuItem href={`/profile/${id}/support/whatsapp`}>Devblog</MenuItem>
-
-          <MenuItem href={`/profile/${id}/support/phone`}>outro</MenuItem>
+          <MenuItem href={`/profile/${id}/link/devblog`}>Devblog</MenuItem>
         </MenuList>
       </Menu>
     </>
   );
 });
-HeaderLinks.displayName = "HeaderLinks"
+HeaderLinks.displayName = "HeaderLinks";
 export default HeaderLinks;

@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<IUserToken>({} as IUserToken);
   const toast = useToast()
   const signIn = async (email: string, password: string) => {
-    setIsBooting(true);
+   
     AuthService()
       .login({ email, password })
       .then((resp) => {
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: Props) => {
         setUser(resp.data);
         setIsLogged(true);
         Router.push(`/profile/${resp.data.id}/`);
-        setIsBooting(false);
+        
       })
       .catch((e) => {
         toast({
@@ -71,11 +71,9 @@ export const AuthProvider = ({ children }: Props) => {
     if (user) {
       setUser(user);
       setIsLogged(true);
-      setIsBooting(false);
     } else {
       setIsLogged(false);
-      setIsBooting(false);
-      Router.replace("/");
+      // Router.replace("/");
     }
   }, [isLogged]);
 
