@@ -87,7 +87,7 @@ const handleUpdateFields = () => {
     <FormControl isInvalid={!!errors.data?.title}>
     <FormLabel>Titulo</FormLabel>
     <Controller name={'data.title'} control={control} defaultValue={getValues('data.title')}
-    rules={{required: "titulo é obrigatório", maxLength: 100}} 
+    rules={{required: "O titulo é obrigatório", maxLength: 100}} 
     render={ ({field})=> ( <ChakraInput
         id="data.title"
         size={"md"}
@@ -98,12 +98,12 @@ const handleUpdateFields = () => {
         {...field}
       />)}
     />
-    <FormErrorMessage>{errors.data?.href?.message}</FormErrorMessage>
+    <FormErrorMessage>{errors.data?.title?.message}</FormErrorMessage>
     </FormControl>
     <FormControl isInvalid={!!errors.data?.href}>
     <FormLabel>Url</FormLabel>
     <Controller name={'data.href'} control={control} defaultValue={getValues('data.href')}
-    rules={{required: "a url é obrigatório", maxLength: 100}} 
+    rules={{required: "A url é obrigatório", maxLength: 100}} 
     render={ ({field})=> ( 
       <ChakraInput
         id="data.href"

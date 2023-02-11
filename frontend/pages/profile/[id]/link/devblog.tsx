@@ -7,9 +7,11 @@ import LinkService from "../../../../services/LinkService";
 import Loading from "../../../../components/UI/Loading";
 import { ILink } from "../../../../@types/interfaces";
 import Card from "../../../../components/UI/Card";
+import useProtected from "../../../../services/useProtected";
 const Devblog = () => {
   const [data, setData] = useState<ILink[]>([]);
   const [isloading, setIsLoading] = useState<boolean>(true);
+  
   const getData = () => {
     LinkService()
       .getDevBlogData()
@@ -19,7 +21,7 @@ const Devblog = () => {
       })
       .catch((e) => console.log(e));
   };
-
+  useProtected()
   useEffect(() => {
     getData();
   }, []);

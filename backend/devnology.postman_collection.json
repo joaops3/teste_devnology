@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b40273ec-3988-4070-a0b0-3350125d8d0c",
-		"name": "library",
+		"_postman_id": "6b160834-e534-472d-b159-dc214c98f4c8",
+		"name": "devnology",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23023753"
+		"_exporter_id": "21889295"
 	},
 	"item": [
 		{
@@ -15,24 +15,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "_id",
-									"value": "55",
-									"type": "text"
-								},
-								{
-									"key": "email",
-									"value": "jao",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "sim",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"joao\",\r\n    \"email\": \"teste@email.com\",\r\n    \"password\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/user/",
@@ -65,7 +54,7 @@
 					"response": []
 				},
 				{
-					"name": "/getall",
+					"name": "getall",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -89,18 +78,18 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NjM5NTc2ODl9.hCIdIlVz7fWz93xzu_-74scWNC8dzUqwKPTOBHlu_Tw",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVtYWlsQGVtYWlsLmNvbSIsInN1YiI6IjYzZTc5ZDZhOWJiNDVjN2RkNTgzMmU4YiIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNjc2MTI0MTE2LCJleHAiOjE2NzYxMjc3MTZ9.HDt5M_mzamzN4SxnlStGGxl_YMB1uuoC6F5S4HbilUg",
 								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{BASE_URL}}/user/44",
+							"raw": "{{BASE_URL}}/user/63e4f0a0ad326048a713ad3a",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"user",
-								"44"
+								"63e4f0a0ad326048a713ad3a"
 							]
 						}
 					},
@@ -112,23 +101,22 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "name",
-									"value": "raskolnikov",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"changed\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/user/23",
+							"raw": "{{BASE_URL}}/user/123",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"user",
-								"23"
+								"123"
 							]
 						}
 					},
@@ -150,13 +138,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/user/22",
+							"raw": "{{BASE_URL}}/user/63e3ea92830e8ed239de1a56",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"user",
-								"22"
+								"63e3ea92830e8ed239de1a56"
 							]
 						}
 					},
@@ -168,14 +156,13 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "email",
-									"value": "teste",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"email@email.com\",\r\n    \"password\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/auth/login",
@@ -191,7 +178,7 @@
 					"response": []
 				},
 				{
-					"name": "buy",
+					"name": "add link",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -203,7 +190,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "\r\n    [\r\n    {\r\n        \"_id\": \"2d6d87fc-a680-4f58-bfe8-14be7dc415a9\"\r\n    },\r\n    {\r\n        \"_id\": \"76867a1b-95cf-482e-8306-7de70a0bbdc8\"\r\n    }\r\n]\r\n",
+							"raw": "\r\n    {\r\n        \"title\": \"google\",\r\n        \"href\": \"https://gogle.com.com\"\r\n    }\r\n  \r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -211,33 +198,47 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/user/55/buy",
+							"raw": "{{BASE_URL}}/user/63e3e4340c581196f7776428/addlink",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"user",
-								"55",
-								"buy"
+								"63e3e4340c581196f7776428",
+								"addlink"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "remove book from user",
+					"name": "remove link from user",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/user/635a7e44cbcce59336675cfc/delete",
+							"raw": "{{BASE_URL}}/user/635a7e44cbcce59336675cfc/delete/:idLinK",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
 								"user",
 								"635a7e44cbcce59336675cfc",
-								"delete"
+								"delete",
+								":idLinK"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "idLinK",
+									"value": null
+								}
 							]
 						}
 					},
@@ -246,55 +247,21 @@
 			]
 		},
 		{
-			"name": "book",
+			"name": "link",
 			"item": [
-				{
-					"name": "create",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{BASE_URL}}/book/",
-							"host": [
-								"{{BASE_URL}}"
-							],
-							"path": [
-								"book",
-								""
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "update",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "author",
-									"value": "joao2223",
-									"type": "text"
-								},
-								{
-									"key": "country",
-									"value": "teste",
-									"type": "text"
-								},
-								{
-									"key": "imageLink",
-									"value": "null",
-									"type": "text"
-								},
-								{
-									"key": "title",
-									"value": "teste2222222",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"\",\r\n    \"href\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
 						"url": {
 							"raw": "{{BASE_URL}}/book/id",
@@ -310,26 +277,48 @@
 					"response": []
 				},
 				{
-					"name": "findAll",
+					"name": "find One",
 					"request": {
 						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "delete",
-					"request": {
-						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/book/id",
+							"raw": "{{BASE_URL}}/link/:id",
 							"host": [
 								"{{BASE_URL}}"
 							],
 							"path": [
-								"book",
-								"id"
+								"link",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "craw devblog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/link/:id",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"link",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": null
+								}
 							]
 						}
 					},
@@ -361,7 +350,7 @@
 	"variable": [
 		{
 			"key": "BASE_URL",
-			"value": "http://localhost:3000",
+			"value": "http://localhost:3333/api",
 			"type": "string"
 		},
 		{

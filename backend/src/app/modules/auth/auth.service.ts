@@ -20,7 +20,7 @@ export class AuthService {
     if(!user) throw new NotFoundException("email is invalid")
     const validation = await bcrypt.compare(password, user.password);
     if (!validation) {
-      throw new HttpException('password invalid', 401);
+      throw new HttpException('password invalid', 400);
     }
     return user;
   }

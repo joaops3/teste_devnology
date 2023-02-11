@@ -1,19 +1,20 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
+import Loading from "../components/UI/Loading";
+import useAuthContext from "../context/AuthContext";
 
-export const protectSSR = <T extends { [key: string]: any; }>(cb: GetServerSideProps<T>) => {
-  return async (ctx: GetServerSidePropsContext): Promise<GetServerSidePropsResult<T>> => {
-    const auth = false
+//Protect Route
 
-    if(!auth){
-      return {
-        redirect: {
-          destination: "/",
-          permanent: false
-        }
-      }
+const useProtected = () => {
+  const { isLogged } = useAuthContext();
+  const route = useRouter();
+  useEffect(() => {
+    if (!isLogged) {
+      route.push("/");
     }
+  }, []);
 
-    return await cb(ctx)
+  return 
+};
 
-  }
-}
+export default useProtected;

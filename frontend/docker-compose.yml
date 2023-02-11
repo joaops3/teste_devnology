@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  frontapp:
+    build: .
+    ports: 
+      - 3000:3000
+    command: "yarn dev"
+    env_file:
+      - .env

@@ -8,11 +8,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Digital Bank</title>
+        <title>MILINKS</title>
       </Head>
       <ChakraProvider theme={theme}>
         <AuthProvider>
-        <Component {...pageProps} />
+          <Component {...pageProps} />
         </AuthProvider>
       </ChakraProvider>
     </>

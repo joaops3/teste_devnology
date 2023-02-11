@@ -6,6 +6,7 @@ import LinkService from "../../../../services/LinkService";
 import { useRouter } from "next/dist/client/router";
 import Loading from "../../../../components/UI/Loading";
 import { ILink } from "../../../../@types/interfaces";
+import useProtected from "../../../../services/useProtected";
 
 const Edit = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,7 +27,7 @@ const Edit = () => {
         console.log(e);
       });
   };
-
+  useProtected()
   useEffect(() => {
     getLinkForUpdate();
   }, []);

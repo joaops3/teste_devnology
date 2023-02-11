@@ -4,12 +4,12 @@ import mongoose, { Document } from 'mongoose';
 
 // export type UserDocument = User & Document;
 
-@Schema()
-export class Link  extends Document {
+@Schema({ timestamps: true })
+export class Link extends Document {
 
   @Prop()
   title: string
-  
+
   @Prop()
   href: string;
 

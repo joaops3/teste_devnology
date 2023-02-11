@@ -11,6 +11,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/app/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/app/common/guards/roles.guard';
 import { Role } from 'src/app/types';
@@ -20,6 +21,9 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './userDto/create-user.dto';
 import { UpdateUserDto } from './userDto/update-user.dto';
 
+
+@ApiTags('api/user')
+@ApiBearerAuth()
 @Controller('api/user')
 export class UserController {
   constructor(
@@ -55,17 +59,22 @@ export class UserController {
     return {data: {_id: user._id}}
   }
 
-
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete("/:id")
   async deleteUser(@Param('id') _id: string){
      return await this.userService.delete(_id)
   }
 
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put('/:id/addlink')
   async addlinkToUser(@Param('id') _id: string,  @Body()createLinkDto: CreateLinkDto){
     return await this.userService.addLink(_id, createLinkDto)
   }
-
+  
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete('/:id/removelink/:linkId')
   async removelinkFromUser(@Param() {id, linkId}: {id: string, linkId: string}){
   

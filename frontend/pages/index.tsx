@@ -1,39 +1,53 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import {useEffect, useState} from "react"
-import {Flex, VStack, Input as ChakraInput, Link, InputGroup, FormLabel, Box, FormControl, InputLeftElement, FormHelperText, Button, FormErrorMessage, Image, Text} from "@chakra-ui/react"
+import type { NextPage } from "next";
+import Head from "next/head";
+import { useEffect, useState } from "react";
+import {
+  Flex,
+  VStack,
+  Input as ChakraInput,
+  Link,
+  InputGroup,
+  FormLabel,
+  Box,
+  FormControl,
+  InputLeftElement,
+  FormHelperText,
+  Button,
+  FormErrorMessage,
+  Image,
+  Text,
+} from "@chakra-ui/react";
 
-import {User, LockSimple} from "phosphor-react"
-import { useRouter } from "next/router"
-import AuthService from '../services/AuthService'
-import useAuthContext from '../context/AuthContext'
-import Logo from '../components/UI/Logo'
-import { getToken } from '../utils/localStorage'
-import { IUserToken } from '../@types/interfaces'
-
+import { User, LockSimple } from "phosphor-react";
+import { useRouter } from "next/router";
+import AuthService from "../services/AuthService";
+import useAuthContext from "../context/AuthContext";
+import Logo from "../components/UI/Logo";
+import { getToken } from "../utils/localStorage";
+import { IUserToken } from "../@types/interfaces";
 
 const Home: NextPage = () => {
-  const [email, setEmail] = useState<string>("")
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<boolean>(false)
-  const {signIn, isLogged, user} = useAuthContext()
-  const route = useRouter()
+  const [error, setError] = useState<boolean>(false);
+  const { signIn, isLogged, user } = useAuthContext();
+  const route = useRouter();
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if(!email || !password) {
-      setError(true)
-      return
+    e.preventDefault();
+    if (!email || !password) {
+      setError(true);
+      return;
     }
-    
-    signIn(email, password)
+
+    signIn(email, password);
   };
 
-  useEffect(()=> {
-    const user = getToken<IUserToken>('user')
-    if(user){
-      route.push(`/profile/${user.id}`)
+  useEffect(() => {
+    const user = getToken<IUserToken>("user");
+    if (user) {
+      route.push(`/profile/${user.id}`);
     }
-  },[])
+  }, []);
 
   return (
     <>
@@ -53,9 +67,15 @@ const Home: NextPage = () => {
           boxShadow={"1px 6px 92px -2px rgba(0,0,0,0.4);"}
         >
           <VStack spacing={"5"}>
-           |<Logo></Logo>
-            <FormControl isInvalid={error} display="flex" justifyContent={"center"}>
-              <FormErrorMessage my={3}>E-mail ou senha incorretos!</FormErrorMessage>
+            |<Logo></Logo>
+            <FormControl
+              isInvalid={error}
+              display="flex"
+              justifyContent={"center"}
+            >
+              <FormErrorMessage my={3}>
+                E-mail ou senha incorretos!
+              </FormErrorMessage>
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="e-mail">E-mail</FormLabel>
@@ -63,7 +83,8 @@ const Home: NextPage = () => {
                 <InputLeftElement>
                   <User size={20} />
                 </InputLeftElement>
-                <ChakraInput as={"input"}
+                <ChakraInput
+                  as={"input"}
                   id="e-mail"
                   type={"e-mail"}
                   placeholder="E-mail"
@@ -84,7 +105,8 @@ const Home: NextPage = () => {
                 <InputLeftElement>
                   <LockSimple size={20} />
                 </InputLeftElement>
-                <ChakraInput as={"input"}
+                <ChakraInput
+                  as={"input"}
                   id="password"
                   type={"Password"}
                   placeholder="Password"
@@ -99,11 +121,16 @@ const Home: NextPage = () => {
                 ></ChakraInput>
               </InputGroup>
             </FormControl>
-
-            <Button as={"button"} type="submit" mt="3" width={"40%"} colorScheme={"yellow"} size="md">
+            <Button
+              as={"button"}
+              type="submit"
+              mt="3"
+              width={"40%"}
+              colorScheme={"yellow"}
+              size="md"
+            >
               Login
             </Button>
-
             <Box textAlign={"left"} w="100%">
               <Text>
                 Não Possui conta ?{" "}
@@ -117,6 +144,6 @@ const Home: NextPage = () => {
       </Flex>
     </>
   );
-}
+};
 
-export default Home
+export default Home;

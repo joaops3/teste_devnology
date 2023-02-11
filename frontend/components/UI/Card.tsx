@@ -44,6 +44,7 @@ const Card: React.FC<Props> = ({
           duration: 5000,
           isClosable: true,
         });
+        setDisabled(false);
       })
       .catch((e) => {
         toast({
@@ -72,7 +73,6 @@ const Card: React.FC<Props> = ({
         mx="auto"
       >
         <ChakraLink
-          as="h2"
           flex={1}
           href={url}
           fontWeight={"semibold"}
@@ -83,7 +83,7 @@ const Card: React.FC<Props> = ({
           _hover={{ textDecoration: "none" }}
         >
           {title}
-        </ChakraLink>{" "}
+        </ChakraLink>
         {type === "personal" && (
           <Flex alignItems={"center"} gap="5">
             <Link href={`/profile/${id}/link/${idLink}`}>

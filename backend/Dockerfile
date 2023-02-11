@@ -1,0 +1,9 @@
+FROM node:16.17.0-alpine
+
+WORKDIR /usr/app
+
+COPY . ./
+
+EXPOSE 3333
+
+RUN npm i
