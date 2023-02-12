@@ -108,6 +108,7 @@ const Header: React.FC = () => {
         </Flex>
       </Flex>
       <DrawerBar
+      id={user.id}
         isOpen={isOpen}
         onClose={onClose}
         onOpen={onOpen}

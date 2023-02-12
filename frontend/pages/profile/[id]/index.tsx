@@ -53,8 +53,9 @@ const Index: NextPage = () => {
           <Flex flexDirection={"column"} gap="5" alignItems={"center"} w="100%">
             {" "}
             {paginatedData ? (
-              paginatedData.map((item) => (
+              paginatedData.map((item, index) => (
                 <Card
+                key={index}
                   title={item.title}
                   url={item.href}
                   id={id}

@@ -18,9 +18,11 @@ import {
 } from "@chakra-ui/react";
 import HeaderLinks from "./HeaderLinks";
 
-type teste = UseDisclosureReturn
+interface Props extends UseDisclosureReturn {
+  id: string
+}
 
-const DrawerBar= ({isOpen, onClose, onOpen, onToggle}: teste) => {
+const DrawerBar= ({isOpen, onClose, onOpen, onToggle, id }: Props) => {
   
 
 
@@ -37,7 +39,7 @@ const DrawerBar= ({isOpen, onClose, onOpen, onToggle}: teste) => {
           <DrawerCloseButton />
           <DrawerHeader>Menu</DrawerHeader>
           <DrawerBody>
-            <HeaderLinks></HeaderLinks>
+            <HeaderLinks id={id}></HeaderLinks>
           </DrawerBody>
         </DrawerContent>
       </DrawerOverlay>
