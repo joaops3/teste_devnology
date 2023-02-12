@@ -7,26 +7,37 @@ export class AllExceptionsFilter implements ExceptionFilter {
     private readonly logger = new Logger(AllExceptionsFilter.name)
 
     catch(exception: any, host: ArgumentsHost) {
-        
+
 
         const ctx = host.switchToHttp();
 
         const response = ctx.getResponse()
         const request = ctx.getRequest()
 
-        const httpStatus =
+        const status =
             exception instanceof HttpException
                 ? exception.getStatus()
-                : 500;
+                : HttpStatus.INTERNAL_SERVER_ERROR;
 
-        const message = exception instanceof HttpException ? exception.getResponse() : "Error"
 
-        this.logger.error(`HTTP status ${httpStatus}, Error message: ${JSON.stringify(message)}`)
-        response.status(httpStatus).json({
-            timestamp: new Date().toISOString(),
-            path: request.url,
-            message: message
-        })
+        const message =
+            exception instanceof HttpException ? exception.getResponse() : exception;
+
+
+
+        this.logger.error(`HTTP status ${status}, Error message: ${JSON.stringify(message)}`)
+        if (exception instanceof HttpException) {
+            response.status(status).json({
+                message
+            })
+        } else {
+            response.status(status).json({
+                timestamp: new Date().toISOString(),
+                path: request.url,
+                message: message
+            })
+        }
+
 
     }
 
